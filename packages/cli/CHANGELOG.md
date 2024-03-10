@@ -1,5 +1,79 @@
 # Change Log
 
+## 2.0.0-next.18
+
+### Major Changes
+
+- 44236041: Moved table ID and field layout constants in code-generated table libraries from the file level into the library, for clearer access and cleaner imports.
+
+  ```diff
+  -import { SomeTable, SomeTableTableId } from "./codegen/tables/SomeTable.sol";
+  +import { SomeTable } from "./codegen/tables/SomeTable.sol";
+
+  -console.log(SomeTableTableId);
+  +console.log(SomeTable._tableId);
+
+  -console.log(SomeTable.getFieldLayout());
+  +console.log(SomeTable._fieldLayout);
+  ```
+
+### Minor Changes
+
+- 645736df: Added an `--rpcBatch` option to `mud deploy` command to batch RPC calls for rate limited RPCs.
+- d7b1c588: Upgraded all packages and templates to viem v2.7.12 and abitype v1.0.0.
+
+  Some viem APIs have changed and we've updated `getContract` to reflect those changes and keep it aligned with viem. It's one small code change:
+
+  ```diff
+   const worldContract = getContract({
+     address: worldAddress,
+     abi: IWorldAbi,
+  -  publicClient,
+  -  walletClient,
+  +  client: { public: publicClient, wallet: walletClient },
+   });
+  ```
+
+### Patch Changes
+
+- 8f49c277: Attempting to deploy multiple systems where there are overlapping system IDs now throws an error.
+- d5c0682f: Updated all human-readable resource IDs to use `{namespace}__{name}` for consistency with world function signatures.
+- 9c83adc0: Added a non-deterministic fallback for deploying to chains that have replay protection on and do not support pre-EIP-155 transactions (no chain ID).
+
+  If you're using `mud deploy` and there's already a [deterministic deployer](https://github.com/Arachnid/deterministic-deployment-proxy) on your target chain, you can provide the address with `--deployerAddress 0x...` to still get some determinism.
+
+- Updated dependencies [8f49c277]
+- Updated dependencies [d5c0682f]
+- Updated dependencies [4be22ba4]
+- Updated dependencies [2c920de7]
+- Updated dependencies [44236041]
+- Updated dependencies [3be4deec]
+- Updated dependencies [c991c71a]
+- Updated dependencies [e34d1170]
+- Updated dependencies [db314a74]
+- Updated dependencies [59267655]
+- Updated dependencies [1a82c278]
+- Updated dependencies [a02da555]
+- Updated dependencies [8193136a]
+- Updated dependencies [86766ce1]
+- Updated dependencies [90d0d79c]
+- Updated dependencies [c58da9ad]
+- Updated dependencies [be18b75b]
+- Updated dependencies [3042f86e]
+- Updated dependencies [d7b1c588]
+- Updated dependencies [95f64c85]
+  - @latticexyz/world@2.0.0-next.18
+  - @latticexyz/common@2.0.0-next.18
+  - @latticexyz/world-modules@2.0.0-next.18
+  - @latticexyz/store@2.0.0-next.18
+  - @latticexyz/gas-report@2.0.0-next.18
+  - @latticexyz/config@2.0.0-next.18
+  - @latticexyz/protocol-parser@2.0.0-next.18
+  - @latticexyz/schema-type@2.0.0-next.18
+  - @latticexyz/abi-ts@2.0.0-next.18
+  - @latticexyz/services@2.0.0-next.18
+  - @latticexyz/utils@2.0.0-next.18
+
 ## 2.0.0-next.17
 
 ### Minor Changes

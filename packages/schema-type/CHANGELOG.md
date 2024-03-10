@@ -1,5 +1,23 @@
 # Change Log
 
+## 2.0.0-next.18
+
+### Minor Changes
+
+- d7b1c588: Upgraded all packages and templates to viem v2.7.12 and abitype v1.0.0.
+
+  Some viem APIs have changed and we've updated `getContract` to reflect those changes and keep it aligned with viem. It's one small code change:
+
+  ```diff
+   const worldContract = getContract({
+     address: worldAddress,
+     abi: IWorldAbi,
+  -  publicClient,
+  -  walletClient,
+  +  client: { public: publicClient, wallet: walletClient },
+   });
+  ```
+
 ## 2.0.0-next.17
 
 ### Major Changes

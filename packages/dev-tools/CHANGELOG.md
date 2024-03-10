@@ -1,5 +1,54 @@
 # @latticexyz/dev-tools
 
+## 2.0.0-next.18
+
+### Minor Changes
+
+- d7b1c588: Upgraded all packages and templates to viem v2.7.12 and abitype v1.0.0.
+
+  Some viem APIs have changed and we've updated `getContract` to reflect those changes and keep it aligned with viem. It's one small code change:
+
+  ```diff
+   const worldContract = getContract({
+     address: worldAddress,
+     abi: IWorldAbi,
+  -  publicClient,
+  -  walletClient,
+  +  client: { public: publicClient, wallet: walletClient },
+   });
+  ```
+
+### Patch Changes
+
+- d5c0682f: Updated all human-readable resource IDs to use `{namespace}__{name}` for consistency with world function signatures.
+- Updated dependencies [3622e39d]
+- Updated dependencies [8f49c277]
+- Updated dependencies [d5c0682f]
+- Updated dependencies [2c920de7]
+- Updated dependencies [44236041]
+- Updated dependencies [3be4deec]
+- Updated dependencies [c991c71a]
+- Updated dependencies [e34d1170]
+- Updated dependencies [db314a74]
+- Updated dependencies [59267655]
+- Updated dependencies [1a82c278]
+- Updated dependencies [8193136a]
+- Updated dependencies [86766ce1]
+- Updated dependencies [3f5d33af]
+- Updated dependencies [c58da9ad]
+- Updated dependencies [be18b75b]
+- Updated dependencies [3042f86e]
+- Updated dependencies [d7b1c588]
+- Updated dependencies [95f64c85]
+  - @latticexyz/store-sync@2.0.0-next.18
+  - @latticexyz/world@2.0.0-next.18
+  - @latticexyz/common@2.0.0-next.18
+  - @latticexyz/store@2.0.0-next.18
+  - @latticexyz/schema-type@2.0.0-next.18
+  - @latticexyz/react@2.0.0-next.18
+  - @latticexyz/recs@2.0.0-next.18
+  - @latticexyz/utils@2.0.0-next.18
+
 ## 2.0.0-next.17
 
 ### Patch Changes

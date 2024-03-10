@@ -1,5 +1,70 @@
 # Change Log
 
+## 2.0.0-next.18
+
+### Minor Changes
+
+- 3042f86e: Moved key schema and value schema methods to constants in code-generated table libraries for less bytecode and less gas in register/install methods.
+
+  ```diff
+  -console.log(SomeTable.getKeySchema());
+  +console.log(SomeTable._keySchema);
+
+  -console.log(SomeTable.getValueSchema());
+  +console.log(SomeTable._valueSchema);
+  ```
+
+- d7b1c588: Upgraded all packages and templates to viem v2.7.12 and abitype v1.0.0.
+
+  Some viem APIs have changed and we've updated `getContract` to reflect those changes and keep it aligned with viem. It's one small code change:
+
+  ```diff
+   const worldContract = getContract({
+     address: worldAddress,
+     abi: IWorldAbi,
+  -  publicClient,
+  -  walletClient,
+  +  client: { public: publicClient, wallet: walletClient },
+   });
+  ```
+
+### Patch Changes
+
+- 8f49c277: Attempting to deploy multiple systems where there are overlapping system IDs now throws an error.
+- 44236041: Moved table ID and field layout constants in code-generated table libraries from the file level into the library, for clearer access and cleaner imports.
+
+  ```diff
+  -import { SomeTable, SomeTableTableId } from "./codegen/tables/SomeTable.sol";
+  +import { SomeTable } from "./codegen/tables/SomeTable.sol";
+
+  -console.log(SomeTableTableId);
+  +console.log(SomeTable._tableId);
+
+  -console.log(SomeTable.getFieldLayout());
+  +console.log(SomeTable._fieldLayout);
+  ```
+
+- 3be4deec: Added salt to the `WorldDeployed` event.
+- 1a82c278: Added system signatures to the `FunctionSignatures` table, so they can be used to generate system ABIs and decode system calls made via the world.
+- 86766ce1: Created an `IWorldEvents` interface with `HelloStore`, so all World events are defined in a single interface.
+- be18b75b: `IWorldKernel` now inherits `IModuleErrors` so it can render the correct errors if the World reverts when delegatecalled with Module code.
+- 95f64c85: Renamed the `functionSelector` key in the `FunctionSelectors` table to `worldFunctionSelector`. This clarifies that `FunctionSelectors` is for world function selectors and can be used to generate the world ABI.
+- Updated dependencies [d5c0682f]
+- Updated dependencies [2c920de7]
+- Updated dependencies [44236041]
+- Updated dependencies [c991c71a]
+- Updated dependencies [e34d1170]
+- Updated dependencies [db314a74]
+- Updated dependencies [59267655]
+- Updated dependencies [8193136a]
+- Updated dependencies [c58da9ad]
+- Updated dependencies [3042f86e]
+- Updated dependencies [d7b1c588]
+  - @latticexyz/common@2.0.0-next.18
+  - @latticexyz/store@2.0.0-next.18
+  - @latticexyz/config@2.0.0-next.18
+  - @latticexyz/schema-type@2.0.0-next.18
+
 ## 2.0.0-next.17
 
 ### Major Changes
