@@ -62,15 +62,19 @@ contract World is StoreData, IWorldKernel {
   }
 
   modifier transactionContext() {
+    bool isInitialized = false;
     if (TransactionContext.getFirstMsgSender() == address(0)) {
       if (ResourceId.unwrap(SystemRegistry.get(WorldContextConsumerLib._msgSender())) != bytes32(0)) {
         revert World_DirectCallToSystemForbidden(WorldContextConsumerLib._msgSender());
       } else {
+        isInitialized = true;
         TransactionContext.setFirstMsgSender(WorldContextConsumerLib._msgSender());
       }
     }
     _;
-    TransactionContext.setFirstMsgSender(address(0));
+    if (isInitialized == true) {
+      TransactionContext.setFirstMsgSender(address(0));
+    }
   }
 
   /**
