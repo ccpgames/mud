@@ -9,6 +9,12 @@ export default mudConfig({
     ResourceId: { filePath: "@latticexyz/store/src/ResourceId.sol", internalType: "bytes32" },
   },
   tables: {
+    TransactionContext: {
+      keySchema: {},
+      valueSchema: {
+        firstMsgSender: "address",
+      },
+    },
     NamespaceOwner: {
       keySchema: {
         namespaceId: "ResourceId",

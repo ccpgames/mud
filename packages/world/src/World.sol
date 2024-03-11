@@ -12,7 +12,7 @@ import { ResourceId, WorldResourceIdInstance } from "./WorldResourceId.sol";
 import { ROOT_NAMESPACE_ID } from "./constants.sol";
 import { AccessControl } from "./AccessControl.sol";
 import { SystemCall } from "./SystemCall.sol";
-import { WorldContextProviderLib } from "./WorldContext.sol";
+import { WorldContextProviderLib, WorldContextConsumerLib } from "./WorldContext.sol";
 import { Delegation } from "./Delegation.sol";
 import { requireInterface } from "./requireInterface.sol";
 
@@ -26,6 +26,8 @@ import { IWorldKernel } from "./IWorldKernel.sol";
 
 import { FunctionSelectors } from "./codegen/tables/FunctionSelectors.sol";
 import { Balances } from "./codegen/tables/Balances.sol";
+import { SystemRegistry } from "./codegen/tables/SystemRegistry.sol";
+import { TransactionContext } from "./codegen/tables/TransactionContext.sol";
 
 /**
  * @title World Contract
@@ -57,6 +59,18 @@ contract World is StoreData, IWorldKernel {
       revert World_CallbackNotAllowed(msg.sig);
     }
     _;
+  }
+
+  modifier transactionContext() {
+    if (TransactionContext.getFirstMsgSender() == address(0)) {
+      if (ResourceId.unwrap(SystemRegistry.get(WorldContextConsumerLib._msgSender())) != bytes32(0)) {
+        revert World_DirectCallToSystemForbidden(WorldContextConsumerLib._msgSender());
+      } else {
+        TransactionContext.setFirstMsgSender(WorldContextConsumerLib._msgSender());
+      }
+    }
+    _;
+    TransactionContext.setFirstMsgSender(address(0));
   }
 
   /**
@@ -340,7 +354,7 @@ contract World is StoreData, IWorldKernel {
   function call(
     ResourceId systemId,
     bytes memory callData
-  ) external payable virtual prohibitDirectCallback returns (bytes memory) {
+  ) external payable virtual prohibitDirectCallback transactionContext returns (bytes memory) {
     return SystemCall.callWithHooksOrRevert(msg.sender, systemId, callData, msg.value);
   }
 
@@ -356,7 +370,7 @@ contract World is StoreData, IWorldKernel {
     address delegator,
     ResourceId systemId,
     bytes memory callData
-  ) external payable virtual prohibitDirectCallback returns (bytes memory) {
+  ) external payable virtual prohibitDirectCallback transactionContext returns (bytes memory) {
     // If the delegator is the caller, call the system directly
     if (delegator == msg.sender) {
       return SystemCall.callWithHooksOrRevert(msg.sender, systemId, callData, msg.value);
@@ -404,7 +418,7 @@ contract World is StoreData, IWorldKernel {
   /**
    * @dev Fallback function to call registered function selectors.
    */
-  fallback() external payable prohibitDirectCallback {
+  fallback() external payable prohibitDirectCallback transactionContext {
     (ResourceId systemId, bytes4 systemFunctionSelector) = FunctionSelectors._get(msg.sig);
 
     if (ResourceId.unwrap(systemId) == 0) revert World_FunctionSelectorNotFound(msg.sig);
